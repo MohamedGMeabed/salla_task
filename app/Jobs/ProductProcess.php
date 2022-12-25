@@ -33,19 +33,20 @@ class ProductProcess implements ShouldQueue
     public function handle()
     {
         try{
-            foreach($this->data as $one){
+            foreach($this->data as $product){
+                
                 Product::updateOrCreate(
                     [
-                        'id' =>$one->id,
+                        'id' =>$product->id,
                     ],
                     [
-                    'id' =>$one->id,
-                    'sku' =>$one->sku,
-                    'price' =>$one->price->amount,
-                    'name' =>$one->name,
-                    'description' =>$one->description,
-                    'main_image' =>$one->main_image,
-                    'status' =>$one->status,
+                    'id'          => $product->id,
+                    'sku'         => $product->sku,
+                    'price'       => $product->price->amount,
+                    'name'        => $product->name,
+                    'description' => $product->description,
+                    'main_image'  => $product->main_image,
+                    'status'      => $product->status,
                 ]);
             }
             return true;
