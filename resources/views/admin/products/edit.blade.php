@@ -119,7 +119,7 @@
                                         Quantity
                                     </label>
                                     <div class="input-group">
-                                        <input type="text" name="quantity" required   class="form-control @error('quantity') is-invalid @enderror" placeholder="Enter quantity Value" value="{{ $product->quantity }}" />
+                                        <input type="text" name="quantity" required  value="{{$product->quantity}}" class="form-control @error('quantity') is-invalid @enderror" placeholder="Enter quantity Value" value="{{ $product->quantity }}" />
                                     </div>
                                     @error("quantity")
                                         <small class="form-text text-danger">{{$message}}</small>

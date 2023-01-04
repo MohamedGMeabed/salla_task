@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\StoreProduct;
 use App\Http\Traits\SallaIntegration;
 use App\Interfaces\ProductInterface;
 use App\Models\Product;
@@ -37,28 +38,29 @@ class ProductController extends Controller
         return view('admin.products.create');
     }
 
-    public function store(Request $request){
+    public function store(StoreProduct $request){
         try{   
             DB::beginTransaction();       
             $data = $request->all();
             $data['status'] = $request->main_image ? 'sale' : 'hidden' ;
             $product = $this->productInterface->store($data);
 
-            Http::withToken('WixnvB2ekMC5j8gDxOKx9wfE6288zstO6fpaBU9AS1Y.JP8rO9zGpajrI_VvLky_JfvDaL5KdOH784DF5V1zs00')
-            ->asJson()->post('https://api.salla.dev/admin/v2/products',[
-                'name' => $data['name'],
-                'price' => $data['price'],
-                'sku' => $data['sku'],
-                'product_type' => $data['product_type'],
-                'quantity' => $data['quantity'],
-                'status' =>   $data['status'],
-                'images' => [
-                    [
-                        'original' =>  $product->main_image,
-                    ]
-                ],
-                'description' => $data['description'],
-            ]);
+            // Http::withToken('WixnvB2ekMC5j8gDxOKx9wfE6288zstO6fpaBU9AS1Y.JP8rO9zGpajrI_VvLky_JfvDaL5KdOH784DF5V1zs00')
+            // ->asJson()->post('https://api.salla.dev/admin/v2/products',[
+            //     'name' => $data['name'],
+            //     'price' => $data['price'],
+            //     'sku' => $data['sku'],
+            //     'product_type' => $data['product_type'],
+            //     'quantity' => $data['quantity'],
+            //     'status' =>   $data['status'],
+            //     'images' => [
+            //         [
+            //             'original' =>  $product->main_image,
+            //         ]
+            //     ],
+            //     'description' => $data['description'],
+            // ]);
+            $this->StoreSallaProduct($data);
             DB::commit();
             return redirect()->route('products.index')->with(['success' => 'Product Saved Successfully']);
         }catch(Exception $ex){
@@ -72,29 +74,15 @@ class ProductController extends Controller
         return view('admin.products.edit',compact('product'));
     }
 
-    public function update(Request $request){
+    public function update(StoreProduct $request){
         try{   
             DB::beginTransaction();       
             $data = $request->all();
             $data['status'] = $request->main_image ? 'sale' : 'hidden' ;
-            $product = $this->productInterface->find($request->id);
+            // $product = $this->productInterface->find($request->id);
             $product = $this->productInterface->update($request->id , $data);
 
-            Http::withToken('WixnvB2ekMC5j8gDxOKx9wfE6288zstO6fpaBU9AS1Y.JP8rO9zGpajrI_VvLky_JfvDaL5KdOH784DF5V1zs00')
-            ->asJson()->put('https://api.salla.dev/admin/v2/products/'.$request->id,[
-                'name' => $data['name'],
-                'price' => $data['price'],
-                'sku' => $data['sku'],
-                'product_type' => $data['product_type'],
-                'quantity' => $data['quantity'],
-                'status' =>   $data['status'],
-                'images' => [
-                    [
-                        'original' =>  $product->main_image,
-                    ]
-                ],
-                'description' => $data['description'],
-            ]);
+           $this->updateSallaProduct($data,$request->id);
             DB::commit();
             return redirect()->route('products.index')->with(['success' => 'Product Updated Successfully']);
         }catch(Exception $ex){

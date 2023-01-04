@@ -20,5 +20,43 @@ trait SallaIntegration
         }
         return $allData;
     }
+
+    public function StoreSallaProduct($data){
+        Http::withToken('WixnvB2ekMC5j8gDxOKx9wfE6288zstO6fpaBU9AS1Y.JP8rO9zGpajrI_VvLky_JfvDaL5KdOH784DF5V1zs00')
+        ->asJson()->post('https://api.salla.dev/admin/v2/products',[
+            'name' => $data['name'],
+            'price' => $data['price'],
+            'sku' => $data['sku'],
+            'product_type' => $data['product_type'],
+            'quantity' => $data['quantity'],
+            'status' =>   $data['status'],
+            'images' => [
+                [
+                    'original' =>  $data['main_image'],
+                ]
+            ],
+            'description' => $data['description'],
+        ]);
+        return response()->json('sucess');
+    }
+
+    public function updateSallaProduct($data ,$id){
+        Http::withToken('WixnvB2ekMC5j8gDxOKx9wfE6288zstO6fpaBU9AS1Y.JP8rO9zGpajrI_VvLky_JfvDaL5KdOH784DF5V1zs00')
+            ->asJson()->put('https://api.salla.dev/admin/v2/products/'.$id,[
+                'name' => $data['name'],
+                'price' => $data['price'],
+                'sku' => $data['sku'],
+                'product_type' => $data['product_type'],
+                'quantity' => $data['quantity'],
+                'status' =>   $data['status'],
+                'images' => [
+                    [
+                        'original' =>  $data['main_image']  ?? null,
+                    ]
+                ],
+                'description' => $data['description'],
+            ]);
+        return response()->json('sucess');
+    }
  
 }
